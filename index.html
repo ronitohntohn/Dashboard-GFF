@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Roniton · Dashboard Multi-Distribuidora</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body { font-family:'Inter',sans-serif; background:#0a0c12; color:#edf2f8; font-size:14px; line-height:1.5; }
+    .dashboard { display:flex; min-height:100vh; position:relative; }
+    /* Sidebar */
+    .sidebar {
+      width:260px; background:#10131c; border-right:1px solid rgba(255,255,255,0.05);
+      padding:20px 0; position:sticky; top:0; height:100vh; overflow-y:auto;
+      transition:transform 0.3s; z-index:10;
+    }
+    .menu-toggle {
+      display:none; position:fixed; top:16px; left:16px; z-index:20;
+      background:#5f8aff; border:none; border-radius:40px; width:44px; height:44px;
+      font-size:20px; color:white; cursor:pointer;
+    }
+    .logo-area { padding:0 16px 20px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:16px; }
+    .logo-area h1 { font-size:18px; font-weight:700; }
+    .logo-area .sub { font-size:11px; color:#9ea7bb; margin-top:4px; }
+    .nav-item {
+      display:flex; align-items:center; gap:10px; padding:8px 16px; margin:2px 12px;
+      border-radius:10px; color:#9ea7bb; font-size:13px; font-weight:500;
+      cursor:pointer; background:transparent; border:none; width:calc(100% - 24px); text-align:left;
+      transition:0.2s;
+    }
+    .nav-item:hover, .nav-item.active { background:#1f2538; color:#5f8aff; }
+    .sync-status { margin-top:20px; padding:16px; border-top:1px solid rgba(255,255,255,0.05); font-size:11px; color:#9ea7bb; }
+    .sync-dot { width:8px; height:8px; border-radius:50%; background:#f4b342; display:inline-block; margin-right:6px; }
+    .sync-dot.ok { background:#2bc48a; animation:pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:0.5;}50%{opacity:1;} }
+    .main { flex:1; padding:24px 28px; max-width:1200px; margin:0 auto; width:100%; }
+    .page { display:none; }
+    .page.active { display:block; animation:fadeIn 0.2s; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);} }
+    .top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+    .page-title h2 { font-size:22px; font-weight:700; }
+    .page-title p { font-size:12px; color:#9ea7bb; margin-top:4px; }
+    .live-badge { background:rgba(43,196,138,0.1); border:1px solid rgba(43,196,138,0.25); border-radius:40px; padding:4px 12px; font-size:12px; display:flex; align-items:center; gap:6px; }
+    .live-dot { width:8px; height:8px; background:#2bc48a; border-radius:50%; animation:pulse 1.5s infinite; }
+    .metric-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:14px; margin-bottom:24px; }
+    .metric-card { background:#10131c; border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:16px; }
+    .metric-label { font-size:10px; text-transform:uppercase; color:#52596e; letter-spacing:0.5px; margin-bottom:6px; }
+    .metric-value { font-size:28px; font-weight:800; font-family:'JetBrains Mono',monospace; }
+    .card { background:#10131c; border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:20px; margin-bottom:20px; }
+    .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
+    .card-title { font-size:11px; font-weight:600; text-transform:uppercase; color:#9ea7bb; letter-spacing:0.5px; }
+    .progress-bar { background:#1f2538; border-radius:20px; height:6px; overflow:hidden; }
+    .progress-fill { height:100%; border-radius:20px; transition:width 0.4s; background:#5f8aff; }
+    .badge { display:inline-flex; padding:4px 10px; border-radius:40px; font-size:10px; font-weight:600; white-space:nowrap; }
+    .badge-finl { background:rgba(43,196,138,0.12); color:#2bc48a; border:1px solid rgba(43,196,138,0.25); }
+    .badge-redi { background:rgba(244,179,66,0.12); color:#f4b342; border:1px solid rgba(244,179,66,0.25); }
+    .badge-veri { background:rgba(42,212,207,0.12); color:#2ad4cf; border:1px solid rgba(42,212,207,0.25); }
+    .badge-vite { background:rgba(240,90,90,0.12); color:#f05a5a; border:1px solid rgba(240,90,90,0.25); }
+    .badge-default { background:#1f2538; color:#9ea7bb; }
+    .dist-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+    .dist-tab {
+      background:#171c2a; border:1px solid rgba(255,255,255,0.1); border-radius:40px;
+      padding:6px 16px; font-size:13px; font-weight:500; cursor:pointer; transition:0.2s;
+    }
+    .dist-tab.active { background:#5f8aff; border-color:#5f8aff; color:white; }
+    .dist-panel { display:none; }
+    .dist-panel.active { display:block; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#9ea7bb; margin-bottom:6px; }
+    input, select, .btn {
+      background:#171c2a; border:1px solid rgba(255,255,255,0.1); border-radius:40px;
+      padding:10px 16px; color:#edf2f8; font-size:13px; font-family:'Inter',sans-serif;
+      outline:none; transition:0.2s; width:100%;
+    }
+    input:focus, select:focus { border-color:#5f8aff; }
+    .btn-primary { background:#5f8aff; border-color:#5f8aff; color:white; cursor:pointer; font-weight:600; text-align:center; }
+    .btn-primary:hover { background:#4a6ed9; }
+    .btn-secondary { background:#1f2538; border-color:rgba(255,255,255,0.1); color:#9ea7bb; cursor:pointer; }
+    .btn-secondary:hover { background:#2a3148; }
+    .btn { cursor:pointer; text-align:center; }
+    .button-group { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
+    .response-output { background:#171c2a; border-radius:12px; padding:16px; margin-top:16px; position:relative; display:none; }
+    .response-output.visible { display:block; }
+    .copy-btn { position:absolute; top:12px; right:12px; background:#1f2538; border:none; border-radius:40px; padding:4px 12px; font-size:11px; cursor:pointer; color:#9ea7bb; width:auto; }
+    .table-wrapper { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th { text-align:left; padding:10px 8px; color:#52596e; font-weight:600; font-size:11px; border-bottom:1px solid rgba(255,255,255,0.05); }
+    td { padding:8px; border-bottom:1px solid rgba(255,255,255,0.03); }
+    .filter-bar { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+    .filter-bar input, .filter-bar select { width:auto; min-width:120px; flex:1; }
+    .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#1e2436; border-radius:60px; padding:8px 20px; font-size:13px; display:none; z-index:1000; white-space:nowrap; }
+    .fab { position:fixed; bottom:20px; right:20px; width:48px; height:48px; border-radius:50%; background:#5f8aff; border:none; color:white; font-size:20px; cursor:pointer; box-shadow:0 4px 12px rgba(95,138,255,0.4); z-index:99; }
+    .fab:active { transform:scale(0.94); }
+    canvas { max-height:200px; width:100%; }
+    @media (max-width:768px) {
+      .menu-toggle { display:flex; align-items:center; justify-content:center; }
+      .sidebar { position:fixed; left:0; top:0; transform:translateX(-100%); transition:transform 0.3s; z-index:15; }
+      .sidebar.open { transform:translateX(0); }
+      .main { padding:16px; margin-top:60px; }
+      .metric-grid { grid-template-columns:1fr 1fr; gap:10px; }
+      .metric-value { font-size:24px; }
+      .top-bar { flex-direction:column; align-items:flex-start; }
+      .live-badge { align-self:flex-start; }
+      .response-output .copy-btn { position:relative; top:0; right:0; margin-bottom:12px; display:inline-block; }
+    }
+    @media (max-width:480px) { .metric-grid { grid-template-columns:1fr; } .dist-tabs { justify-content:center; } }
+  </style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle">☰</button>
+<div class="toast" id="toastMsg">📋 <span id="toastText"></span></div>
+
+<div class="dashboard">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-area"><h1>Roniton Flow</h1><div class="sub">Multi-Distribuidora</div></div>
+    <button class="nav-item active" data-page="home">📊 Métricas</button>
+    <button class="nav-item" data-page="tabela">📋 Tabulação</button>
+    <button class="nav-item" data-page="resposta">✉️ Gerar resposta</button>
+    <div class="sync-status"><div class="sync-dot" id="syncDot"></div><span id="syncText">Carregando...</span></div>
+  </aside>
+
+  <main class="main">
+    <!-- Página Métricas (com novas métricas) -->
+    <div class="page active" id="page-home">
+      <div class="top-bar"><div class="page-title"><h2>Métricas ao vivo</h2><p>Feitas hoje + projeções</p></div><span class="live-badge"><span class="live-dot"></span>Atualizado</span></div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">📆 Feitas hoje</div><div class="metric-value" id="feitasHoje">—</div><div class="metric-label">Meta: <span id="metaDiaShow">40</span></div></div>
+        <div class="metric-card"><div class="metric-label">📅 Feitas no mês</div><div class="metric-value" id="feitasMes">—</div><div class="metric-label">Meta: <span id="metaMesShow">800</span></div></div>
+        <div class="metric-card"><div class="metric-label">🏁 Faltam hoje</div><div class="metric-value" id="faltamHoje">—</div></div>
+        <div class="metric-card"><div class="metric-label">📊 Total geral</div><div class="metric-value" id="totalGeral">—</div></div>
+        <div class="metric-card"><div class="metric-label">📈 Média diária (mês)</div><div class="metric-value" id="mediaDiaria">—</div><div class="metric-label">notas/dia útil</div></div>
+        <div class="metric-card"><div class="metric-label">🎯 Dias para meta</div><div class="metric-value" id="diasParaMeta">—</div><div class="metric-label">no ritmo atual</div></div>
+      </div>
+      <div class="card"><div class="card-header"><span class="card-title">Progresso diário</span><span class="badge" id="pctDia">0%</span></div><div class="progress-bar"><div class="progress-fill" id="barDia" style="width:0%"></div></div></div>
+      <div class="card"><div class="card-header"><span class="card-title">Distribuição por status</span></div><canvas id="statusChart" height="150"></canvas></div>
+      <div class="card"><div class="card-header"><span class="card-title">Últimas notas</span></div><div class="table-wrapper"><table><thead><tr><th>Data</th><th>Matrícula</th><th>Nº nota</th><th>Status</th></tr></thead><tbody id="ultimas"></tbody></table></div></div>
+    </div>
+
+    <!-- Tabulação -->
+    <div class="page" id="page-tabela">
+      <div class="top-bar"><div class="page-title"><h2>Tabulação completa</h2></div></div>
+      <div class="filter-bar"><input type="text" id="searchTab" placeholder="Buscar..."><select id="filterStatus"><option value="">Todos status</option><option value="FINL">Finalizado</option><option value="REDI">Redirecionado</option><option value="VERI">Verificação</option><option value="VITE">Urgente</option></select></div>
+      <div class="card"><div class="table-wrapper"><table><thead><tr><th>Data</th><th>Matrícula</th><th>Nº nota</th><th>Status</th><th>Canal</th></tr></thead><tbody id="tabBody"></tbody></table></div><div id="tabCount" style="margin-top:12px; text-align:right; font-size:11px; color:#52596e;"></div></div>
+    </div>
+
+    <!-- Gerar resposta com abas -->
+    <div class="page" id="page-resposta">
+      <div class="top-bar"><div class="page-title"><h2>Gerar resposta</h2><p>Escolha distribuidora e caso</p></div></div>
+      <div class="dist-tabs" id="distTabs">
+        <div class="dist-tab active" data-dist="brasilia">Brasília</div>
+        <div class="dist-tab" data-dist="cosern">Cosern</div>
+        <div class="dist-tab" data-dist="celpe">Celpe</div>
+      </div>
+
+      <!-- Brasília -->
+      <div id="panel-brasilia" class="dist-panel active">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Dados (Brasília)</span><span id="tplStatusBrasilia" class="badge badge-default">Carregando...</span></div>
+          <div class="form-group"><label>Nome do cliente</label><input type="text" id="nomeBrasilia" placeholder="Ex: Lucas"></div>
+          <div class="form-group"><label>Protocolo</label><input type="text" id="protoBrasilia" placeholder="Ex: 700000812345"></div>
+          <div class="form-group"><label>Identificador</label><select id="identBrasilia"><option>Carregando...</option></select></div>
+          <div class="form-group"><label>Resultado</label><select id="resultadoBrasilia"><option value="Procedente">Procedente</option><option value="Improcedente">Improcedente</option></select></div>
+          <div class="form-group"><label>Status interno</label><select id="statusBrasilia"><option value="">Nenhum</option><option value="FINL">Finalizado</option><option value="REDI">Redirecionado</option><option value="VERI">Verificação</option><option value="VITE">Visita a campo</option></select></div>
+          <div class="button-group"><button class="btn btn-primary gerar-resp-btn" data-dist="brasilia">📝 Gerar resposta</button><button class="btn btn-secondary limpar-btn" data-dist="brasilia">🗑️ Limpar</button></div>
+          <div id="outputBrasilia" class="response-output"><button class="copy-btn" data-dist="brasilia">📋 Copiar</button><pre id="textoBrasilia" style="white-space:pre-wrap;"></pre></div>
+        </div>
+        <div class="card"><div class="card-header"><span class="card-title">Templates Brasília</span></div><div id="listaBrasilia" style="font-size:12px; max-height:300px; overflow-y:auto;"></div></div>
+      </div>
+
+      <!-- Cosern (similar) -->
+      <div id="panel-cosern" class="dist-panel">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Dados (Cosern)</span><span id="tplStatusCosern" class="badge badge-default">Carregando...</span></div>
+          <div class="form-group"><label>Nome do cliente</label><input type="text" id="nomeCosern" placeholder="Ex: Lucas"></div>
+          <div class="form-group"><label>Protocolo</label><input type="text" id="protoCosern" placeholder="Ex: 700000812345"></div>
+          <div class="form-group"><label>Identificador</label><select id="identCosern"><option>Carregando...</option></select></div>
+          <div class="form-group"><label>Resultado</label><select id="resultadoCosern"><option value="Procedente">Procedente</option><option value="Improcedente">Improcedente</option></select></div>
+          <div class="form-group"><label>Status interno</label><select id="statusCosern"><option value="">Nenhum</option><option value="FINL">Finalizado</option><option value="REDI">Redirecionado</option><option value="VERI">Verificação</option><option value="VITE">Visita a campo</option></select></div>
+          <div class="button-group"><button class="btn btn-primary gerar-resp-btn" data-dist="cosern">📝 Gerar resposta</button><button class="btn btn-secondary limpar-btn" data-dist="cosern">🗑️ Limpar</button></div>
+          <div id="outputCosern" class="response-output"><button class="copy-btn" data-dist="cosern">📋 Copiar</button><pre id="textoCosern" style="white-space:pre-wrap;"></pre></div>
+        </div>
+        <div class="card"><div class="card-header"><span class="card-title">Templates Cosern</span></div><div id="listaCosern" style="font-size:12px; max-height:300px; overflow-y:auto;"></div></div>
+      </div>
+
+      <!-- Celpe (similar) -->
+      <div id="panel-celpe" class="dist-panel">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Dados (Celpe)</span><span id="tplStatusCelpe" class="badge badge-default">Carregando...</span></div>
+          <div class="form-group"><label>Nome do cliente</label><input type="text" id="nomeCelpe" placeholder="Ex: Lucas"></div>
+          <div class="form-group"><label>Protocolo</label><input type="text" id="protoCelpe" placeholder="Ex: 700000812345"></div>
+          <div class="form-group"><label>Identificador</label><select id="identCelpe"><option>Carregando...</option></select></div>
+          <div class="form-group"><label>Resultado</label><select id="resultadoCelpe"><option value="Procedente">Procedente</option><option value="Improcedente">Improcedente</option></select></div>
+          <div class="form-group"><label>Status interno</label><select id="statusCelpe"><option value="">Nenhum</option><option value="FINL">Finalizado</option><option value="REDI">Redirecionado</option><option value="VERI">Verificação</option><option value="VITE">Visita a campo</option></select></div>
+          <div class="button-group"><button class="btn btn-primary gerar-resp-btn" data-dist="celpe">📝 Gerar resposta</button><button class="btn btn-secondary limpar-btn" data-dist="celpe">🗑️ Limpar</button></div>
+          <div id="outputCelpe" class="response-output"><button class="copy-btn" data-dist="celpe">📋 Copiar</button><pre id="textoCelpe" style="white-space:pre-wrap;"></pre></div>
+        </div>
+        <div class="card"><div class="card-header"><span class="card-title">Templates Celpe</span></div><div id="listaCelpe" style="font-size:12px; max-height:300px; overflow-y:auto;"></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<button class="fab" id="fab">↻</button>
+
+<script>
+  // ============================================================
+  // CONFIGURAÇÃO
+  // ============================================================
+  const SHEET_ID = '1m_sD07RmMn4W-i7-aLtCOL8N1SntoZnp03aExbn6F6c';
+  let META_DIA = 40, META_MES = 800;
+  let allRows = [];
+  let feitasHojeVal = 0;
+  let statusChart = null;
+
+  const templates = { brasilia: { map: {}, list: [] }, cosern: { map: {}, list: [] }, celpe: { map: {}, list: [] } };
+  const DIST_SHEETS = { brasilia: 'Casos Brasília EMAIL', cosern: 'Casos Cosern EMAIL', celpe: 'Casos Celpe EMAIL' };
+
+  // ============================================================
+  // UTILITÁRIOS
+  // ============================================================
+  function showToast(msg) { const toast = document.getElementById('toastMsg'); document.getElementById('toastText').innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2500); }
+  function setEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = (val !== undefined) ? val : '—'; }
+  function numOf(s) { const n = parseInt(String(s).replace(/\D/g, '')); return isNaN(n) ? 0 : n; }
+  function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+
+  async function gviz(sheetNameOrGid) {
+    try {
+      const ts = Date.now();
+      let url = typeof sheetNameOrGid === 'number'
+        ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${sheetNameOrGid}&ts=${ts}`
+        : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetNameOrGid)}&ts=${ts}`;
+      const resp = await fetch(url, { cache: 'no-store' });
+      const txt = await resp.text();
+      const match = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+      if (!match) return null;
+      return JSON.parse(match[1]).table;
+    } catch(e) { console.error(e); return null; }
+  }
+
+  function parseTable(tbl) {
+    if (!tbl || !tbl.rows) return [];
+    return tbl.rows.map(row => (tbl.cols || []).map((_, i) => {
+      const c = (row.c || [])[i];
+      if (!c || c.v === null) return '';
+      if (typeof c.v === 'string' && c.v.startsWith('Date(')) return c.f || '';
+      return c.f != null ? String(c.f) : String(c.v);
+    }));
+  }
+
+  // ============================================================
+  // 1. FEITAS HOJE (robusto)
+  // ============================================================
+  async function fetchFeitasHoje() {
+    // Método A: célula E2 (qualquer linha com número >0)
+    try {
+      const tbl = await gviz('Resposta ao cliente');
+      if (tbl && tbl.rows) {
+        const rows = parseTable(tbl);
+        for (let i = 0; i < rows.length; i++) {
+          const val = rows[i][4];
+          if (val && !isNaN(numOf(val)) && numOf(val) > 0) return numOf(val);
+        }
+        if (rows.length > 1 && rows[1].length > 4) return numOf(rows[1][4]);
+      }
+    } catch(e) { console.warn(e); }
+    // Método B: fallback Tabulação
+    const hoje = new Date(), hojeStr = `${hoje.getDate()}/${hoje.getMonth()+1}/${hoje.getFullYear()}`;
+    return allRows.filter(r => r[0] === hojeStr && (r[1]||'').toUpperCase() === 'E738097' && r[3]).length;
+  }
+
+  // ============================================================
+  // 2. TABULAÇÃO
+  // ============================================================
+  async function fetchTabulation() {
+    const tbl = await gviz(774245236);
+    if (!tbl) return [];
+    const rows = parseTable(tbl);
+    return rows.filter(r => r[0] && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(r[0]));
+  }
+
+  // ============================================================
+  // 3. TEMPLATES POR DISTRIBUIDORA
+  // ============================================================
+  async function loadTemplatesForDist(dist, sheetName) {
+    try {
+      const tbl = await gviz(sheetName);
+      if (!tbl) throw new Error(`Aba ${sheetName} não encontrada`);
+      const rows = parseTable(tbl);
+      const map = {}, list = [];
+      for (const row of rows) {
+        const ident = (row[1] || '').trim();
+        const proc = (row[0] || '').trim();
+        const impro = (row[2] || '').trim();
+        if (ident && (proc || impro)) { map[ident] = { Procedente: proc, Improcedente: impro }; list.push(ident); }
+      }
+      templates[dist] = { map, list };
+      return true;
+    } catch(e) { console.error(`Erro ${dist}:`, e); templates[dist] = { map: {}, list: [] }; return false; }
+  }
+
+  function updateUIForDist(dist) {
+    const { list, map } = templates[dist];
+    const select = document.getElementById(`ident${capitalize(dist)}`);
+    const listaDiv = document.getElementById(`lista${capitalize(dist)}`);
+    const statusSpan = document.getElementById(`tplStatus${capitalize(dist)}`);
+    if (select) select.innerHTML = '<option value="">Selecione</option>' + list.map(id => `<option value="${id.replace(/"/g,'&quot;')}">${id}</option>`).join('');
+    if (listaDiv) listaDiv.innerHTML = list.length ? list.map(id => `<div style="margin-bottom:12px; padding:8px; background:#171c2a; border-radius:12px;"><strong style="color:#5f8aff;">${id}</strong><br><span style="font-size:11px;">📧 Proc: ${(map[id].Procedente||'—').substring(0,60)}…</span><br><span style="font-size:11px;">❌ Impro: ${(map[id].Improcedente||'—').substring(0,60)}…</span></div>`).join('') : '<div style="color:#f4b342;">Nenhum template carregado.</div>';
+    if (statusSpan) { statusSpan.textContent = list.length ? `✓ ${list.length} templates` : '⚠ Sem templates'; statusSpan.className = list.length ? 'badge badge-finl' : 'badge badge-default'; }
+  }
+
+  // ============================================================
+  // 4. GERAR RESPOSTA
+  // ============================================================
+  function gerarRespostaParaDist(dist) {
+    const nome = document.getElementById(`nome${capitalize(dist)}`).value.trim();
+    const proto = document.getElementById(`proto${capitalize(dist)}`).value.trim() || '[protocolo]';
+    const ident = document.getElementById(`ident${capitalize(dist)}`).value;
+    const resultado = document.getElementById(`resultado${capitalize(dist)}`).value;
+    const statusInt = document.getElementById(`status${capitalize(dist)}`).value;
+    if (!ident) { showToast('Selecione o identificador'); return; }
+    const templateObj = templates[dist].map[ident];
+    if (!templateObj) { showToast('Template não encontrado'); return; }
+    let base = templateObj[resultado];
+    if (!base) { showToast(`Texto para ${resultado} não disponível`); return; }
+    let resposta = (resultado === 'Procedente' ? (nome ? `Olá, ${nome}!` : 'Olá!') : 'Caro cliente,') + '\n\n' + base.replace(/^Olá.*?!\s*/i, '').replace(/^Caro cliente,\s*/i, '');
+    resposta = resposta.replace(/\[NOME\]|\[Nome\]|\[nome\]/gi, nome || '[Cliente]').replace(/\[PROTOCOLO\]|\[Protocolo\]|\[protocolo\]/gi, proto);
+    resposta = resposta.replace(/\[?inf_extra_1\s*,\s*-t12\]?/gi, proto).replace(/\[?INF_EXTRA_1\s*,\s*-T12\]?/gi, proto).replace(/\[?inf_extra_1\]?/gi, proto).replace(/\[?-t12\]?/gi, proto);
+    if (statusInt === 'FINL') resposta += '\n\nSua solicitação foi finalizada com sucesso.';
+    else if (statusInt === 'REDI') resposta += '\n\nSua solicitação foi redirecionada para equipe de campo. Retorno em 5 dias úteis.';
+    else if (statusInt === 'VERI') resposta += '\n\nSua solicitação está em verificação interna. Prazo: 5 dias úteis.';
+    else if (statusInt === 'VITE') resposta += '\n\nDevido à visita técnica, o prazo foi estendido em 10 dias úteis.';
+    const output = document.getElementById(`output${capitalize(dist)}`);
+    const pre = document.getElementById(`texto${capitalize(dist)}`);
+    pre.textContent = resposta;
+    output.classList.add('visible');
+  }
+
+  function limparPainel(dist) {
+    document.getElementById(`nome${capitalize(dist)}`).value = '';
+    document.getElementById(`proto${capitalize(dist)}`).value = '';
+    document.getElementById(`ident${capitalize(dist)}`).value = '';
+    document.getElementById(`resultado${capitalize(dist)}`).value = 'Procedente';
+    document.getElementById(`status${capitalize(dist)}`).value = '';
+    document.getElementById(`output${capitalize(dist)}`).classList.remove('visible');
+    showToast('Campos limpos');
+  }
+
+  // ============================================================
+  // 5. MÉTRICAS E GRÁFICOS
+  // ============================================================
+  function atualizarMetricas() {
+    const feitasHoje = feitasHojeVal;
+    const now = new Date();
+    const mesAtual = now.getMonth(), anoAtual = now.getFullYear();
+    const diasNoMes = new Date(anoAtual, mesAtual+1, 0).getDate();
+    const diasUteis = Math.min(diasNoMes, 22); // aproximação
+    const feitasMes = allRows.filter(r => { const d = parseDateBr(r[0]); return d && d.getMonth() === mesAtual && d.getFullYear() === anoAtual; }).length;
+    const total = allRows.length;
+    const faltamHoje = Math.max(0, META_DIA - feitasHoje);
+    const pctDia = feitasHoje > 0 ? Math.min(100, Math.round(feitasHoje / META_DIA * 100)) : 0;
+    const mediaDiaria = (feitasMes / Math.max(1, now.getDate())).toFixed(1);
+    const ritmoAtual = feitasMes / Math.max(1, now.getDate());
+    const diasRestantes = diasNoMes - now.getDate();
+    const projFinal = Math.round(feitasMes + ritmoAtual * diasRestantes);
+    const diasParaMeta = projFinal >= META_MES ? 0 : Math.ceil((META_MES - feitasMes) / Math.max(0.1, ritmoAtual));
+
+    setEl('feitasHoje', feitasHoje);
+    setEl('feitasMes', feitasMes);
+    setEl('faltamHoje', faltamHoje);
+    setEl('totalGeral', total);
+    setEl('mediaDiaria', mediaDiaria);
+    setEl('diasParaMeta', diasParaMeta > 0 ? diasParaMeta : '✅ meta alcançável');
+    document.getElementById('pctDia').textContent = `${pctDia}%`;
+    document.getElementById('barDia').style.width = `${pctDia}%`;
+
+    // Gráfico de status
+    const statusCount = { FINL:0, REDI:0, VERI:0, VITE:0 };
+    allRows.forEach(r => { const s = (r[3] || '').toUpperCase(); if (statusCount[s] !== undefined) statusCount[s]++; });
+    if (statusChart) statusChart.destroy();
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    statusChart = new Chart(ctx, { type: 'bar', data: { labels: Object.keys(statusCount), datasets: [{ data: Object.values(statusCount), backgroundColor: '#5f8aff', borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } } });
+
+    // Últimas 5 notas
+    const ultimas = allRows.slice(-5).reverse();
+    document.getElementById('ultimas').innerHTML = ultimas.map(r => `<tr><td>${r[0]||'-'}</td><td>${r[1]||'-'}</td><td>${r[2]||'-'}</td><td>${badgeStatus(r[3])}</td></tr>`).join('') || '<tr><td colspan="4">Nenhuma nota</td></tr>';
+    renderFullTable();
+  }
+
+  function renderFullTable() {
+    const search = (document.getElementById('searchTab')?.value || '').toLowerCase();
+    const filterStatus = (document.getElementById('filterStatus')?.value || '').toUpperCase();
+    let filtered = [...allRows];
+    if (search) filtered = filtered.filter(r => r.some(c => c.toLowerCase().includes(search)));
+    if (filterStatus) filtered = filtered.filter(r => (r[3] || '').toUpperCase().includes(filterStatus));
+    document.getElementById('tabBody').innerHTML = filtered.slice(0, 100).map(r => `<tr><td>${r[0]||'-'}</td><td>${r[1]||'-'}</td><td>${r[2]||'-'}</td><td>${badgeStatus(r[3])}</td><td>${r[4] ? (r[4].toLowerCase().includes('email') ? '📧 E-mail' : '📱 SMS') : '-'}</td></tr>`).join('');
+    document.getElementById('tabCount').textContent = `Exibindo ${Math.min(filtered.length,100)} de ${filtered.length} registros`;
+  }
+
+  function badgeStatus(s) {
+    const u = (s || '').toUpperCase();
+    if (u === 'FINL') return '<span class="badge badge-finl">FINL</span>';
+    if (u === 'REDI') return '<span class="badge badge-redi">REDI</span>';
+    if (u === 'VERI') return '<span class="badge badge-veri">VERI</span>';
+    if (u === 'VITE') return '<span class="badge badge-vite">VITE</span>';
+    return '<span class="badge badge-default">—</span>';
+  }
+  function parseDateBr(str) { if (!str) return null; const p = str.split('/'); return p.length===3 ? new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0])) : null; }
+
+  // ============================================================
+  // 6. CARREGAMENTO PRINCIPAL
+  // ============================================================
+  async function loadAll() {
+    const dot = document.getElementById('syncDot'), syncText = document.getElementById('syncText');
+    dot.className = 'sync-dot'; syncText.innerText = 'Atualizando...';
+    try {
+      allRows = await fetchTabulation();
+      await Promise.all([loadTemplatesForDist('brasilia', DIST_SHEETS.brasilia), loadTemplatesForDist('cosern', DIST_SHEETS.cosern), loadTemplatesForDist('celpe', DIST_SHEETS.celpe)]);
+      updateUIForDist('brasilia'); updateUIForDist('cosern'); updateUIForDist('celpe');
+      feitasHojeVal = await fetchFeitasHoje();
+      atualizarMetricas();
+      dot.className = 'sync-dot ok'; syncText.innerText = `Atualizado ${new Date().toLocaleTimeString()}`;
+    } catch(e) { console.error(e); dot.className = 'sync-dot'; syncText.innerText = 'Erro'; showToast('Erro ao carregar'); }
+  }
+
+  async function refresh() { const fab = document.getElementById('fab'); fab.style.transform = 'rotate(360deg)'; await loadAll(); setTimeout(() => fab.style.transform = '', 300); }
+
+  // ============================================================
+  // 7. EVENTOS E NAVEGAÇÃO
+  // ============================================================
+  function initNav() {
+    const navs = document.querySelectorAll('.nav-item'), pages = document.querySelectorAll('.page'), sidebar = document.getElementById('sidebar'), menuToggle = document.getElementById('menuToggle');
+    const closeSidebar = () => { if (window.innerWidth <= 768) sidebar.classList.remove('open'); };
+    navs.forEach(btn => btn.addEventListener('click', () => { const page = btn.getAttribute('data-page'); navs.forEach(b => b.classList.remove('active')); btn.classList.add('active'); pages.forEach(p => p.classList.remove('active')); document.getElementById(`page-${page}`).classList.add('active'); closeSidebar(); }));
+    menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+    document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) sidebar.classList.remove('open'); });
+  }
+
+  function initTabs() {
+    const tabs = document.querySelectorAll('.dist-tab'), panels = document.querySelectorAll('.dist-panel');
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      const dist = tab.getAttribute('data-dist');
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      panels.forEach(p => p.classList.remove('active'));
+      document.getElementById(`panel-${dist}`).classList.add('active');
+    }));
+  }
+
+  function initButtons() {
+    document.querySelectorAll('.gerar-resp-btn').forEach(btn => btn.addEventListener('click', (e) => gerarRespostaParaDist(btn.getAttribute('data-dist'))));
+    document.querySelectorAll('.limpar-btn').forEach(btn => btn.addEventListener('click', (e) => limparPainel(btn.getAttribute('data-dist'))));
+    document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', (e) => {
+      const dist = btn.getAttribute('data-dist');
+      const pre = document.getElementById(`texto${capitalize(dist)}`);
+      if (pre && pre.textContent) navigator.clipboard.writeText(pre.textContent).then(() => showToast('Copiado!'));
+    }));
+    document.getElementById('searchTab')?.addEventListener('input', renderFullTable);
+    document.getElementById('filterStatus')?.addEventListener('change', renderFullTable);
+    document.getElementById('fab').addEventListener('click', refresh);
+  }
+
+  const savedDia = localStorage.getItem('metaDia'), savedMes = localStorage.getItem('metaMes');
+  if (savedDia) META_DIA = parseInt(savedDia);
+  if (savedMes) META_MES = parseInt(savedMes);
+  setEl('metaDiaShow', META_DIA);
+  setEl('metaMesShow', META_MES);
+
+  initNav(); initTabs(); initButtons();
+  loadAll();
+  setInterval(refresh, 30000);
+</script>
+</body>
+</html>
