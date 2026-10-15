@@ -12,42 +12,25 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --primary:#0057a0;
-  --primary-light:#1a7bc4;
-  --primary-dark:#003d73;
-  --secondary:#00a651;
-  --accent:#ff6b35;
-  --bg-start:#e8eef5;
-  --bg-end:#d0dcec;
+  --primary:#0057a0; --primary-light:#1a7bc4; --primary-dark:#003d73;
+  --secondary:#00a651; --accent:#ff6b35;
+  --bg-start:#e8eef5; --bg-end:#d0dcec;
   --card-bg:rgba(255,255,255,0.55);
   --glass-border:rgba(255,255,255,0.35);
-  --text:#1a2c3e;
-  --text-muted:#5a6874;
+  --text:#1a2c3e; --text-muted:#5a6874;
   --shadow:0 12px 32px rgba(0,0,0,0.08);
   --radius:24px;
-  --transition:0.3s cubic-bezier(0.4,0,0.2,1);
 }
 body.dark{
-  --bg-start:#0b101a;
-  --bg-end:#141c2b;
+  --bg-start:#0b101a; --bg-end:#141c2b;
   --card-bg:rgba(20,26,40,0.85);
   --glass-border:rgba(255,255,255,0.08);
-  --text:#edf2f8;
-  --text-muted:#9ea7bb;
+  --text:#edf2f8; --text-muted:#9ea7bb;
   --shadow:0 12px 32px rgba(0,0,0,0.4);
 }
-body{
-  font-family:'Inter',sans-serif;
-  background:linear-gradient(-45deg, #d4e0f0, #b8cce0, #a0b8d0, #c0d4e8);
-  background-size:400% 400%;
-  animation:gradientBG 18s ease infinite;
-  color:var(--text);
-  min-height:100vh;
-  padding:20px;
-  transition:background .4s,color .3s;
-}
+body{font-family:'Inter',sans-serif;background:linear-gradient(-45deg,#d4e0f0,#b8cce0,#a0b8d0,#c0d4e8);background-size:400% 400%;animation:gradientBG 18s ease infinite;color:var(--text);min-height:100vh;padding:20px;transition:background .4s,color .3s;}
 @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-body.dark{background:linear-gradient(-45deg, #0a101a, #141c2b, #1a2438, #0f1825);}
+body.dark{background:linear-gradient(-45deg,#0a101a,#141c2b,#1a2438,#0f1825);}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:10px}
@@ -81,11 +64,10 @@ body.dark .login-container input{background:rgba(255,255,255,0.08);}
 .metric-label{font-size:12px;text-transform:uppercase;color:var(--text-muted);letter-spacing:.3px;font-weight:600;}
 .metric-value{font-size:30px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text);line-height:1.2;}
 .meta-fixa{font-size:11px;color:var(--text-muted);margin-top:2px;}
-.metric-card .expand-icon{position:absolute;top:6px;right:10px;font-size:14px;color:var(--text-muted);opacity:.4;}
-.combo-card{padding:16px 20px;grid-column:span 1;}
+.combo-card{padding:16px 20px;}
 .combo-container{display:flex;align-items:stretch;gap:20px;height:100%;}
 .last-hour-notes{flex:1;display:flex;flex-direction:column;justify-content:center;border-right:2px solid rgba(0,0,0,0.06);padding-right:20px;cursor:pointer;}
-.last-hour-notes .label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-light, #7085a8);font-weight:600;}
+.last-hour-notes .label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-light,#7085a8);font-weight:600;}
 .last-hour-values{display:flex;gap:24px;margin-top:2px;}
 .last-hour-values span{font-size:1.9rem;font-weight:700;color:var(--text);}
 .last-hour-values .divider{color:rgba(0,0,0,0.15);font-weight:300;}
@@ -104,14 +86,14 @@ body.dark .login-container input{background:rgba(255,255,255,0.08);}
 .quality-trend.up{color:#00a651;}
 .quality-trend.down{color:#e74c3c;}
 .quality-trend.neutral{color:var(--text-muted);}
-.quality-details{max-height:0;overflow:hidden;transition:max-height 0.5s ease, padding 0.4s ease, opacity 0.35s ease;opacity:0;padding-top:0;}
+.quality-details{max-height:0;overflow:hidden;transition:max-height 0.5s ease,padding 0.4s ease,opacity 0.35s ease;opacity:0;padding-top:0;}
 .quality-widget.expanded .quality-details{max-height:920px;opacity:1;padding-top:16px;}
 .quality-details .detail-row{display:flex;justify-content:space-between;font-size:0.85rem;padding:6px 0;border-bottom:1px dashed rgba(0,0,0,0.05);}
 .quality-details .detail-row:last-of-type{border-bottom:none;}
 .quality-details .detail-row .label{color:var(--text-muted);}
 .quality-details .detail-row .val{font-weight:600;color:var(--text);}
 .quality-details .progress-bar{height:6px;background:rgba(0,0,0,0.06);border-radius:20px;margin-top:4px;overflow:hidden;}
-.quality-details .progress-bar .fill{height:100%;width:0%;background:linear-gradient(90deg, var(--primary), var(--primary-light));border-radius:20px;transition:width .5s ease;}
+.quality-details .progress-bar .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--primary-light));border-radius:20px;transition:width .5s ease;}
 .quality-details .hint{font-size:0.7rem;color:var(--text-muted);text-align:center;margin-top:10px;font-weight:500;}
 .section-mini-title{font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 6px;}
 .qualidade-semanas .semana-row{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-radius:10px;font-size:0.85rem;margin:4px 0;background:rgba(0,0,0,0.035);border:1px solid rgba(0,0,0,0.03);}
@@ -200,16 +182,13 @@ body.dark .supervisor-settings input{background:rgba(255,255,255,0.06);}
 .hora-bar{flex:1;min-width:8px;height:24px;background:rgba(0,0,0,0.06);border-radius:4px;position:relative;transition:background .2s;cursor:help;}
 .hora-bar.active{background:linear-gradient(180deg,#f39c12,#e67e22);}
 .hora-bar:hover{background:rgba(243,156,18,0.5);}
-.hora-bar.active:hover{background:linear-gradient(180deg,#e67e22,#d35400);}
 .hora-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-top:2px;font-weight:600;}
 @media(max-width:860px){.app-wrapper{flex-direction:column;}.sidebar-panel{position:fixed;top:0;left:0;width:100%!important;height:100vh;border-radius:0;z-index:999;transform:translateX(-100%);transition:transform .35s ease;box-shadow:0 0 40px rgba(0,0,0,0.2);}.sidebar-panel.open{transform:translateX(0);width:100%!important;}.top-bar{flex-direction:column;align-items:stretch;border-radius:24px;}.user-info{flex-wrap:wrap;}.metric-grid{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));}.metric-value{font-size:24px;}.combo-container{flex-direction:column;}.last-hour-notes{border-right:none;padding-right:0;border-bottom:2px solid rgba(0,0,0,0.06);padding-bottom:12px;}.charts-row{grid-template-columns:1fr;}}
 @media(max-width:480px){body{padding:12px;}.login-container{margin:40px auto;padding:24px 16px;}.card{padding:16px;}.modal-content{padding:20px;}.hour-detail-grid{grid-template-columns:1fr;}.top-bar{padding:10px;}.metric-grid{grid-template-columns:1fr 1fr;}}
-@media(orientation:landscape)and(max-height:500px){.login-container{margin:20px auto;padding:20px;}.top-bar{padding:8px 14px;}.metric-grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));}.metric-card{padding:10px;}.metric-value{font-size:20px;}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginContainer" class="login-container">
   <h2>⚡ Neoenergia Brasília</h2>
   <p class="sub">Gestão de Produtividade + Monitorias</p>
@@ -219,7 +198,6 @@ body.dark .supervisor-settings input{background:rgba(255,255,255,0.06);}
   <div id="loginError" class="error-msg"></div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard">
   <div class="app-wrapper">
     <div class="sidebar-panel" id="sidebarPanel">
@@ -506,7 +484,6 @@ body.dark .supervisor-settings input{background:rgba(255,255,255,0.06);}
   <button class="fab" id="refreshFab">↻</button>
 </div>
 
-<!-- MODAIS -->
 <div id="searchModal" class="modal">
   <div class="modal-content">
     <button class="modal-close" id="closeModalBtn">✕</button>
@@ -546,26 +523,28 @@ body.dark .supervisor-settings input{background:rgba(255,255,255,0.06);}
 
 <script>
 // ============================================================
-// CONFIGURAÇÕES GERAIS
+// CONFIGURAÇÕES
 // ============================================================
 const SHEET_ID = '1m_sD07RmMn4W-i7-aLtCOL8N1SntoZnp03aExbn6F6c';
 
-// Mapa de abas: nome exato → gid
-const ABAS = {
-  'Produtividade mensal João':   '343340650',
-  'Produtividade Mensal Damares':'129802651',
-  'Produtividade Mensal Roniton':'774245236',
-  'credenciais':                 '1577977041'
+// GID → nome descritivo (para leitura por GID, que é mais confiável)
+const GIDS = {
+  '343340650': { nome: 'Produtividade mensal João',     matricula: 'E738084' },
+  '129802651': { nome: 'Produtividade Mensal Damares',  matricula: 'E993326' },
+  '774245236': { nome: 'Produtividade Mensal Roniton',  matricula: 'E738097' },
+  '1577977041': { nome: 'credenciais',                  matricula: null }
 };
 
-// Mapa matrícula → nome da aba de produtividade
-const ABA_POR_MATRICULA = {
-  'E738084': 'Produtividade mensal João',     // João Manoel
-  'E993326': 'Produtividade Mensal Damares',  // Damares
-  'E738097': 'Produtividade Mensal Roniton'   // Roniton
+// Matrícula → GID da aba de produtividade
+const GID_POR_MATRICULA = {
+  'E738084': '343340650',
+  'E993326': '129802651',
+  'E738097': '774245236'
 };
 
-// Links Úteis - embutidos (você pode adicionar/remover facilmente)
+const DIAS_UTEIS_MES = 20;
+const REFRESH_INTERVAL = 15000;
+
 const LINKS_UTEIS = [
   { nome: '📘 Manual de Respostas Padronizadas', link: 'https://iberdrola.sharepoint.com/sites/book-atendimento/SitePages/Manual_de_Respostas_Padronizadas_para_Atendimento_de_Reclama%C3%A7%C3%B5es1.aspx' },
   { nome: '📂 Book Atendimento (Drive)',          link: 'https://drive.google.com/drive/folders/1rJXwXNTF8C2Vb5DuQtaI27Q51vv1VnhR' },
@@ -592,9 +571,6 @@ const LINKS_UTEIS = [
   { nome: '🔑 Alterar senha – Iberdrola Identiiq',  link: 'https://www.iberdrola.com/identiiq/login.jsf' }
 ];
 
-const DIAS_UTEIS_MES = 20;
-const REFRESH_INTERVAL = 15000;
-
 let monitoriasData = [];
 let currentUser = null;
 let supervisorMode = false;
@@ -609,14 +585,23 @@ let qualidadeIndividualData = [];
 let qualidadeEquipeData = [];
 
 // ============================================================
-// GOOGLE SHEETS via gviz
+// GOOGLE SHEETS via gviz — por GID (mais estável)
 // ============================================================
-async function gviz(sheetId, sheetName) {
+async function gvizPorGid(sheetId, gid) {
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}&t=${Date.now()}`;
+  const resp = await fetch(url, { cache: 'no-store' });
+  const txt = await resp.text();
+  const match = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+  if (!match) throw new Error(`Erro ao carregar gid ${gid}`);
+  return JSON.parse(match[1]).table;
+}
+
+async function gvizPorNome(sheetId, sheetName) {
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}`;
   const resp = await fetch(url, { cache: 'no-store' });
   const txt = await resp.text();
   const match = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
-  if (!match) throw new Error("Erro ao carregar dados da aba " + sheetName);
+  if (!match) throw new Error(`Erro ao carregar aba "${sheetName}"`);
   return JSON.parse(match[1]).table;
 }
 
@@ -634,49 +619,49 @@ function parseTable(tbl) {
   });
 }
 
-async function carregarAba(nome) {
-  try {
-    const tbl = await gviz(SHEET_ID, nome);
-    return parseTable(tbl);
-  } catch (e) {
-    console.warn(`Aba "${nome}" não encontrada:`, e);
-    return [];
-  }
-}
-
 // ============================================================
-// NORMALIZAÇÃO – mesmo layout em todas as abas de produtividade
-// A=data/hora, B=matrícula, C=nº nota, D=status, E=tipo resposta, F=livre, G=classificação
+// NORMALIZAÇÃO — layout padrão das abas de produtividade
+// A=data/hora | B=matrícula | C=nº nota | D=status | E=tipo resposta | F=e-mail | G=classificação
 // ============================================================
-function normalizarRegistro(row) {
+function normalizarRegistro(row, matriculaFixa) {
   const keys = Object.keys(row);
   if (keys.length < 7) return null;
 
-  const colData   = keys[0];
-  const colMat    = keys[1];
-  const colNota   = keys[2];
-  const colStatus = keys[3];
-  const colClass  = keys[6];
+  const colData   = keys[0];  // A
+  const colMat    = keys[1];  // B
+  const colNota   = keys[2];  // C
+  const colStatus = keys[3];  // D
+  const colClass  = keys[6];  // G
 
   const timestamp = String(row[colData] || '').trim();
-  const mat       = String(row[colMat] || '').trim();
+  const mat       = matriculaFixa || String(row[colMat] || '').trim();
   const nota      = String(row[colNota] || '').trim();
 
+  // Ignora linhas totalmente vazias
+  if (!timestamp && !nota) return null;
+  if (!timestamp) return null;
+
+  // Status
   let statusRaw = String(row[colStatus] || '').toUpperCase().trim();
   if (statusRaw.includes('FINAL') || statusRaw === 'FINL')           statusRaw = 'FINL';
   else if (statusRaw.includes('REDIR'))                              statusRaw = 'REDI';
   else if (statusRaw.includes('VERIF'))                              statusRaw = 'VERI';
   else if (statusRaw.includes('URG') || statusRaw.includes('VITE'))  statusRaw = 'VITE';
 
-  let classRaw = String(row[colClass] || '').toLowerCase()
-    .replace(/\s+/g, ' ')
-    .replace(/\s*-\s*/g, '-')
+  // Classificação (coluna G)
+  // Aceita: "Cria", "Backlog", "Trans - \"gredida\"", "Transgredida", "trans - gredida", etc.
+  let classRaw = String(row[colClass] || '')
+    .toLowerCase()
+    .replace(/"/g, '')          // remove aspas
+    .replace(/\s+/g, ' ')        // normaliza espaços
+    .replace(/\s*-\s*/g, '-')    // "trans - gredida" → "trans-gredida"
     .trim();
 
   let tipo = '';
-  if (classRaw.includes('trans'))                            tipo = 'transguedida';
-  else if (classRaw.includes('cria'))                        tipo = 'cria';
-  else if (classRaw.includes('back'))                        tipo = 'backlog';
+  if (classRaw.includes('trans') && classRaw.includes('gred')) tipo = 'transguedida';
+  else if (classRaw.includes('trans'))                          tipo = 'transguedida';
+  else if (classRaw.includes('cria'))                           tipo = 'cria';
+  else if (classRaw.includes('back'))                           tipo = 'backlog';
 
   return {
     "Carimbo de data/hora": timestamp,
@@ -693,26 +678,48 @@ function normalizarRegistro(row) {
 async function carregarDadosConsolidados() {
   let todos = [];
 
-  for (const [mat, nomeAba] of Object.entries(ABA_POR_MATRICULA)) {
-    const dados = await carregarAba(nomeAba);
-    if (!dados.length) { console.warn(`⚠️ Aba "${nomeAba}" vazia.`); continue; }
-    const norm = dados.map(normalizarRegistro).filter(Boolean);
-    // Garante que a matrícula seja sempre a do dono da aba
-    norm.forEach(r => { r.Matricula = mat; });
-    todos = todos.concat(norm);
-    console.log(`📋 ${nomeAba}: ${norm.length} registros (matrícula ${mat})`);
+  for (const [mat, gid] of Object.entries(GID_POR_MATRICULA)) {
+    const info = GIDS[gid];
+    const nomeAba = info?.nome || `gid ${gid}`;
+    try {
+      const tbl = await gvizPorGid(SHEET_ID, gid);
+      const dados = parseTable(tbl);
+      if (!dados.length) {
+        console.warn(`⚠️ Aba "${nomeAba}" (gid ${gid}) vazia.`);
+        continue;
+      }
+      const norm = dados.map(r => normalizarRegistro(r, mat)).filter(Boolean);
+      todos = todos.concat(norm);
+
+      const contagemTipos = norm.reduce((acc, r) => {
+        const t = r["Back ou Cria?"] || 'vazio';
+        acc[t] = (acc[t] || 0) + 1;
+        return acc;
+      }, {});
+      console.log(`📋 ${nomeAba} (gid ${gid}): ${norm.length} registros para ${mat}`, contagemTipos);
+    } catch (e) {
+      console.error(`Erro na aba ${nomeAba} (gid ${gid}):`, e);
+    }
   }
 
   allRows = todos;
   console.log(`✅ Total consolidado: ${allRows.length}`);
 
   await carregarMonitorias();
-  qualidadeIndividualData = await carregarAba('QUALIDADE INDIVIDUAL');
-  qualidadeEquipeData     = await carregarAba('QUALIDADE DA EQUIPE');
+
+  try {
+    const tblQI = await gvizPorNome(SHEET_ID, 'QUALIDADE INDIVIDUAL');
+    qualidadeIndividualData = parseTable(tblQI);
+  } catch (e) { qualidadeIndividualData = []; }
+
+  try {
+    const tblQE = await gvizPorNome(SHEET_ID, 'QUALIDADE DA EQUIPE');
+    qualidadeEquipeData = parseTable(tblQE);
+  } catch (e) { qualidadeEquipeData = []; }
 }
 
 // ============================================================
-// FUNÇÕES DE DATA
+// DATAS
 // ============================================================
 function parseDataHora(str) {
   if (!str) return null;
@@ -748,7 +755,8 @@ function formatDate(dateStr) {
 // ============================================================
 async function carregarMonitorias() {
   try {
-    const dados = await carregarAba('Monitorias');
+    const tbl = await gvizPorNome(SHEET_ID, 'Monitorias');
+    const dados = parseTable(tbl);
     if (!dados || dados.length === 0) { monitoriasData = []; return; }
     const cabecalho = Object.keys(dados[0]);
     const colDataNota      = cabecalho.find(c => /data da nota/i.test(c));
@@ -850,25 +858,25 @@ function calcularMetricas(rows) {
   let viteTotal = 0;
   let notasUltimaHora = 0;
   const statusCount = { FINL: 0, REDI: 0, VERI: 0, VITE: 0 };
-  let totalNotas = rows.length;
+  let totalNotas = 0;
 
   for (const row of rows) {
     const dataObj = parseDataHora(row["Carimbo de data/hora"]);
     const tsFull  = parseTimestampFull(row["Carimbo de data/hora"]);
     const status  = row.Status || '';
     const tipo    = row["Back ou Cria?"] || '';
+    if (!dataObj) continue;
+    totalNotas++;
 
-    if (dataObj) {
-      const isHoje     = dataObj.toDateString() === hoje.toDateString();
-      const isMesAtual = (dataObj.getMonth() === hoje.getMonth() && dataObj.getFullYear() === hoje.getFullYear());
-      if (isHoje)     feitasHoje++;
-      if (isMesAtual) feitasMes++;
+    const isHoje     = dataObj.toDateString() === hoje.toDateString();
+    const isMesAtual = (dataObj.getMonth() === hoje.getMonth() && dataObj.getFullYear() === hoje.getFullYear());
+    if (isHoje)     feitasHoje++;
+    if (isMesAtual) feitasMes++;
 
-      if (status === 'FINL') {
-        if (tipo === 'cria') { if (isHoje) finalizadasCriaHoje++; if (isMesAtual) finalizadasCriaMes++; }
-        else if (tipo === 'backlog') { if (isHoje) finalizadasBacklogHoje++; if (isMesAtual) finalizadasBacklogMes++; }
-        else if (tipo === 'transguedida') { if (isHoje) transguedidasHoje++; if (isMesAtual) transguedidasMes++; }
-      }
+    if (status === 'FINL') {
+      if (tipo === 'cria') { if (isHoje) finalizadasCriaHoje++; if (isMesAtual) finalizadasCriaMes++; }
+      else if (tipo === 'backlog') { if (isHoje) finalizadasBacklogHoje++; if (isMesAtual) finalizadasBacklogMes++; }
+      else if (tipo === 'transguedida') { if (isHoje) transguedidasHoje++; if (isMesAtual) transguedidasMes++; }
     }
     if (status === 'VERI' || status === 'REDI') {
       if (tipo === 'cria') veriRediCria++;
@@ -972,7 +980,6 @@ function parseValorPercentual(raw) {
   if (v > 0 && v < 1) v = v * 100;
   return v;
 }
-
 function obterQualidadeIndividualSemanal(matricula) {
   if (!qualidadeIndividualData || !qualidadeIndividualData.length) return null;
   const first = qualidadeIndividualData[0];
@@ -1009,7 +1016,6 @@ function obterQualidadeIndividualSemanal(matricula) {
   const atual = [s4, s3, s2, s1].find(v => v !== null) ?? null;
   return { s1, s2, s3, s4, atual };
 }
-
 function obterQualidadeEquipe() {
   if (!qualidadeEquipeData || !qualidadeEquipeData.length) return null;
   const linha = qualidadeEquipeData[0];
@@ -1022,7 +1028,6 @@ function obterQualidadeEquipe() {
   const atual = [s4, s3, s2, s1].find(v => v !== null) ?? null;
   return { s1, s2, s3, s4, atual };
 }
-
 function renderizarSemanasQualidade(qualSem) {
   const container = document.getElementById('qualidadeSemanasList');
   if (!container) return;
@@ -1051,7 +1056,6 @@ function renderizarSemanasQualidade(qualSem) {
   }
   container.innerHTML = html;
 }
-
 function renderizarSemanasQualidadeEquipe(qualEq) {
   const container = document.getElementById('qualidadeSemanasEquipeList');
   if (!container) return;
@@ -1080,7 +1084,6 @@ function renderizarSemanasQualidadeEquipe(qualEq) {
   }
   container.innerHTML = html;
 }
-
 function renderizarDistribuicaoHora(contagem, horaTop) {
   const container = document.getElementById('horaDistrib');
   if (!container) return;
@@ -1561,7 +1564,19 @@ function openLinksModal() {
 // LOGIN
 // ============================================================
 async function fazerLogin(mat, sen) {
-  const creds = await carregarAba('credenciais');
+  let creds = [];
+  try {
+    const tbl = await gvizPorGid(SHEET_ID, GIDS['1577977041'] ? '1577977041' : '1577977041');
+    creds = parseTable(tbl);
+  } catch (e) {
+    try {
+      const tbl = await gvizPorNome(SHEET_ID, 'credenciais');
+      creds = parseTable(tbl);
+    } catch (e2) {
+      mostrarErro("Falha ao carregar credenciais.");
+      return;
+    }
+  }
 
   const matNorm = mat.trim();
   const senNorm = sen.trim();
@@ -1714,7 +1729,6 @@ function initEvents() {
   document.getElementById('closeAgentDetailBtn').addEventListener('click', () => document.getElementById('agentDetailModal').style.display = 'none');
   window.addEventListener('click', (e) => { if (e.target === document.getElementById('agentDetailModal')) e.currentTarget.style.display = 'none'; });
 
-  // Search modal
   document.getElementById('searchIconBtn').addEventListener('click', () => document.getElementById('searchModal').style.display = 'flex');
   document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('searchModal').style.display = 'none');
   window.addEventListener('click', (e) => { if (e.target === document.getElementById('searchModal')) document.getElementById('searchModal').style.display = 'none'; });
@@ -1740,12 +1754,10 @@ function initEvents() {
     }
   });
 
-  // Links modal
   document.getElementById('linksUteisBtn').addEventListener('click', openLinksModal);
   document.getElementById('closeLinksBtn').addEventListener('click', () => document.getElementById('linksModal').style.display = 'none');
   window.addEventListener('click', (e) => { if (e.target === document.getElementById('linksModal')) document.getElementById('linksModal').style.display = 'none'; });
 
-  // Hour detail modal
   document.querySelector('.combo-card .last-hour-notes').addEventListener('click', openHourDetail);
   document.getElementById('closeHourDetailBtn').addEventListener('click', () => document.getElementById('hourDetailModal').style.display = 'none');
   window.addEventListener('click', (e) => { if (e.target === document.getElementById('hourDetailModal')) document.getElementById('hourDetailModal').style.display = 'none'; });
